@@ -8,11 +8,19 @@ public class ListTester implements Runnable {
 	final private List<Integer> list;
 	final private CyclicBarrier interimBarr;
 	final private CyclicBarrier printResBarr;
+	final private CyclicBarrier addIdBarr;
 	final private Random rand = new Random();
 
 	ListTester(int _numThr, List<Integer> _list) {
 		numThr = _numThr;
 		list = _list;
+
+		Runnable addIdRun = new Runnable() {
+			public void run() {
+				System.out.println("Finish add Thread ID test, Next test...");
+				assert(list.isEmpty());
+			}
+		};
 
 		Runnable interimRun = new Runnable() {
 			public void run() {
@@ -26,6 +34,7 @@ public class ListTester implements Runnable {
 			}
 		};
 
+		addIdBarr = new CyclicBarrier(numThr, addIdRun);
 		interimBarr = new CyclicBarrier(numThr, interimRun);
 		printResBarr = new CyclicBarrier(numThr, printResRun);
 	}
@@ -43,6 +52,8 @@ public class ListTester implements Runnable {
 		// i.e. lists should be empty between tests. 
 		// The interimBarr enforces this.
 		try {
+			addRemoveThreadID();
+			addIdBarr.await();
 			containsOnEmptyListTest();
 			interimBarr.await();
 			sentinelsInEmptyListTest();
@@ -63,7 +74,6 @@ public class ListTester implements Runnable {
 
 	private void sentinelsInEmptyListTest() {	
 		int i = 0;
-		System.out.println("== sentinelsInEmptyListTest");
 		for (; i < NUMREP; i++) {
 			// We use unique thread IDs as our values
 			// After an add(), a subsequent contains() should report true
@@ -74,5 +84,23 @@ public class ListTester implements Runnable {
 		}
 	}
 
+	private void addRemoveThreadID() {
+		Integer myId = (int) (long)Thread.currentThread().getId();
+		// add my threadId twice, then remove
+		for (int i = 0; i < NUMREP; i++) {
+			// add first
+			assert(list.add(myId));
+			assert(list.contains(myId));
+			// add second
+			assert(list.add(myId));
+			assert(list.contains(myId));
+			// remove first
+			assert(list.remove(myId));
+			assert(list.contains(myId));
+			// remove second
+			assert(list.remove(myId));
+			assert(list.contains(myId) == false);
+		}
+	}
 }
 	
