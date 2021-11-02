@@ -63,6 +63,7 @@ public class ListTester implements Runnable {
 
 	private void sentinelsInEmptyListTest() {	
 		int i = 0;
+		System.out.println("== sentinelsInEmptyListTest");
 		for (; i < NUMREP; i++) {
 			// We use unique thread IDs as our values
 			// After an add(), a subsequent contains() should report true

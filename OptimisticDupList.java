@@ -94,6 +94,9 @@ public class OptimisticDupList<T> implements OptimisticInterface<T> {
 
 	public boolean contains(T item) {
 		int key = item.hashCode();
+		if (key == this.head.key || key == this.tail.key) {
+			return true;
+		}
 		while (true) {
 			Node<T> pred = head;
 			Node<T> curr = pred.next;

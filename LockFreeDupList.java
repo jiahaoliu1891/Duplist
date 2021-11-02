@@ -63,6 +63,11 @@ public class LockFreeDupList<T> implements LockFreeInterface<T> {
 
 	public boolean add(T item) {
 		int key = item.hashCode();
+		Object max = Integer.MAX_VALUE;
+		Object min = Integer.MIN_VALUE;
+		if (key ==  max.hashCode() || key == min.hashCode()) {
+			return false;
+		}
 		while(true) {
 			Window window = find(head, key);
 			Node<T> pred = window.pred, curr = window.curr;
@@ -78,6 +83,12 @@ public class LockFreeDupList<T> implements LockFreeInterface<T> {
 	// what if: A.remove(2), B.remove(2)
 	public boolean remove(T item) {
 		int key = item.hashCode();
+		Object max = Integer.MAX_VALUE;
+		Object min = Integer.MIN_VALUE;
+		if (key ==  max.hashCode() || key == min.hashCode()) {
+			return false;
+		}
+		
 		boolean snip;
 		while (true) {
 			Window window = find(head, key);

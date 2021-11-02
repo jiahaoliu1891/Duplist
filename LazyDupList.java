@@ -25,7 +25,9 @@ public class LazyDupList<T> implements LazyInterface<T> {
 
 	public boolean add(T item) {
 		int key = item.hashCode();
-		if (item.equals(Integer.MIN_VALUE) || item.equals(Integer.MAX_VALUE)) {
+		Object max = Integer.MAX_VALUE;
+		Object min = Integer.MIN_VALUE;
+		if (key ==  max.hashCode() || key == min.hashCode()) {
 			return false;
 		}
 
@@ -58,6 +60,13 @@ public class LazyDupList<T> implements LazyInterface<T> {
 
 	public boolean remove(T item) {
 		int key = item.hashCode();
+		
+		Object max = Integer.MAX_VALUE;
+		Object min = Integer.MIN_VALUE;
+		if (key ==  max.hashCode() || key == min.hashCode()) {
+			return false;
+		}
+
 		while (true) {
 			Node<T> pred = head;
 			Node<T> curr = head.next;
